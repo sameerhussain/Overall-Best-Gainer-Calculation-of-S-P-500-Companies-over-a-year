@@ -1,11 +1,18 @@
 import pdb
 from datetime import datetime
-
+from filenames_getter import filler
 # We use this to get the day wise, month wise,quarter wise data,
 # We return the data taking today closing date from yesterday's closing date.
 # 
 class analyzer:
-
+    months=[1,3,5,7,8,10,12]
+    dates={}
+    f = filler()
+    def __init__(self):
+        for i in range(1,13):
+            self.dates[i] = False
+        for month in self.months:
+            self.dates[month] = True
     def get_next_date(self,date,value):
         # Get the next date from the given value
         # 
@@ -15,7 +22,14 @@ class analyzer:
                 date[0] -= 1
             else :
                 date[1] -= 1
-            return [date[0],date[1],date[2]]
+            daty = self.f.correct_date(date[2],date[1],date[0])
+            i = 2
+            j = 0
+            for j in range(0,len(daty)):
+                date[i] = daty[j]
+                i -= 1
+            return date
+
         elif value=='quarter':
             if date[1]-3 <= 0 :
                 date[1] += 12
@@ -23,11 +37,35 @@ class analyzer:
                 date[0] -= 1
             else:
                 date[1] -= 3
-        return date
+            daty = self.f.correct_date(date[2],date[1],date[0])
+            i = 2
+            j = 0
+            for j in range(0,len(daty)):
+                date[i] = daty[j]
+                i -= 1
+            return date
     
+    def correct_date(self,date):
+        if self.dates[date[1]] == False :
+            if date[1] == 2:
+                if date[0]%4 == 0:
+                    if date[2] > 29:
+                        date[2] = 29
+                        return date
+                    else :
+                        if date[2] > 28 :
+                            date[2] = 28
+                            return date
+            else:
+                if date[2] > 31:
+                        date[2] = 30
+                        return date
+
     def compare_date(self,present,_next):
         # comparing the present date,with next date
-        return datetime(present[0],present[1],present[2]) < datetime(_next[0],_next[1],_next[2])
+        flag = False
+        flag = datetime(present[0],present[1],present[2]) < datetime(_next[0],_next[1],_next[2])
+        return flag 
                 
     def analyze(self,filename):
         daywise = []

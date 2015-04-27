@@ -12,6 +12,15 @@ class stats:
             d[filename[:-4]] = an.analyze(filename)
         return d 
 
+    def _sum(self,A):
+        rank = 0.0
+        for i in A:
+            try :
+                rank += (1/float(i))
+            except ZeroDivisionError :
+                kk = 1
+        return rank/len(A)
+            
     def sort_the_matter_out(self,d):
         keys = d.keys()
         B={}
@@ -21,7 +30,7 @@ class stats:
         value=[]
         A={}
 
-        for  j in range(0,4) :
+        for  j in range(0,len(d[keys[0]])) :
             rank = 1;
             l = len(d[keys[0]][j])
             A = {}
@@ -64,17 +73,20 @@ class stats:
         keys = B.keys();
         print ("key","daywise","monthly","quarterly","yearwise")
         for key in keys:
-             l = len(B[key])
-             ck = []
-             for j in range(0,l):
-                 if ( B[key][j]):
-                         m = sum(B[key][j])
-                         n = max(B[key][j])
-                         p = min(B[key][j])
+            l = len(B[key])
+            ck = []
+            for j in range(0,l):
+                if ( B[key][j]):
+                        m = sum(B[key][j])
+                        n = max(B[key][j])
+                        p = min(B[key][j])
 
-                         B[key][j].append('%3.3f' %(1-((float(p)/float(n)))))
-                         ck.append('%3.3f' %(1-((float(p)/float(n)))))
-             print (key,ck)
+                        
+                        #print (B[key][j])
+                        B[key][j].append('%3.3f' %(1-((float(p)/float(n)))))
+                        #ck.append('%3.3f' %(1-((float(B[key][j])/float(n)))))
+                        ck.append('%3.3f' %(self._sum(B[key][j])))
+            print (key,ck)
         return B;
 
 def main():
